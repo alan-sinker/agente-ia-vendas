@@ -67,7 +67,15 @@ Pergunte de forma conversacional:
 > **B)** Google Gemini — gratuito até certo limite
 > **C)** Anthropic Claude — mais preciso para vendas"
 
+Se a escolha for **Google Gemini (B)**, avise ANTES de pedir a chave — é o ponto onde o aluno mais se confunde:
+
+> "Pra pegar a chave do Gemini, vá em **aistudio.google.com/apikey** e clique em 'Create API key'. A chave certa sempre começa com `AIzaSy`.
+>
+> ⚠️ Não instale o Gemini CLI nem use o Google Cloud Console — são ferramentas diferentes e geram um token que começa com `AQ.` (não funciona aqui)."
+
 Peça a API key e execute: `python3 setup/test_api.py --provider X --key Y`
+
+- Se a chave colada começar com `AQ.` → não tente validar, explique que é o token errado (Gemini CLI/Cloud) e peça a chave `AIzaSy` do AI Studio de novo.
 
 - Funcionar → confirme e avance
 - Erro 401 → "Essa chave parece incorreta. Pode conferir e colar de novo?"
