@@ -887,7 +887,7 @@ footer span { color: var(--accent-purple); }
     </div>
     <div class="terminal-body">
       <span class="t-line"><span class="t-comment"># Clone + entra na pasta + abre o Claude (tudo em um comando)</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> &amp;&amp; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">claude</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> 2&gt;/dev/null; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">claude</span></span></span>
     </div>
   </div>
 
@@ -895,6 +895,13 @@ footer span { color: var(--accent-purple); }
     <span class="callout-icon">✅</span>
     <div class="callout-body">
       Quando o Claude abrir, ele lê o <strong>CLAUDE.md</strong> automaticamente e já começa dizendo: <em>"Oi! Vou criar seu agente de vendas agora..."</em> — sem você precisar pedir nada.
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">🔁</span>
+    <div class="callout-body">
+      Já colou esse comando antes e a pasta <strong>agente-ia-vendas</strong> já existe no seu computador? Sem problema — pode colar de novo, ele pula o clone e só continua de onde parou.
     </div>
   </div>
 

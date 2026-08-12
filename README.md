@@ -7,8 +7,10 @@ Um **agente de vendas IA que responde no WhatsApp** sem código complicado. Setu
 Cole este comando no terminal e o Claude faz o resto:
 
 ```bash
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git && cd agente-ia-vendas && claude
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && claude
 ```
+
+> Já rodou esse comando antes e a pasta `agente-ia-vendas` já existe no seu computador? Sem problema — pode colar de novo, ele pula o clone e só continua de onde parou.
 
 O Claude abre automaticamente e conduz o setup por você — sem mais nenhum comando.
 
