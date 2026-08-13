@@ -21,7 +21,9 @@
   > aperte Enter pra fechar. Depois cole isto no terminal:
   >
   > ```
-  > git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && claude
+  > git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
+  > cd agente-ia-vendas
+  > claude
   > ```
   >
   > Aí eu continuo daqui. 👍"
@@ -35,4 +37,5 @@
 ## Passo C — Execute o setup
 
 Leia **[`SETUP.md`](SETUP.md)** e execute da Etapa 1 até a Etapa 7, seguindo todas as
-regras de comportamento descritas lá. Comece rodando `python3 setup/check_prerequisites.py`.
+regras de comportamento descritas lá. Comece rodando `python3 setup/check_prerequisites.py`
+(no Windows: `python setup\check_prerequisites.py`).

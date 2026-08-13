@@ -17,32 +17,51 @@ import sys
 
 REPO_URL = "https://github.com/zxmarketingdigital/agente-ia-vendas.git"
 
+WINDOWS = os.name == "nt"
+
+# Como o aluno chama o Python NESTA maquina. No Windows o instalador do python.org
+# cria `python`/`py`, nao `python3` — e o alias `python3.exe` do sistema abre a
+# Microsoft Store, que e' o erro confuso classico (review 13/Ago/26).
+PY_CMD = "python" if WINDOWS else "python3"
+
+# Versao minima de Node por CLI (campo `engines.node` do proprio pacote, conferido
+# em 13/Ago/26): gemini-cli >=20, codex >=16, claude-code >=22. O piso do produto e'
+# 20, porque a Gemini e' a opcao recomendada/gratuita — declarar 18 aprovava uma
+# maquina onde o `npm install -g @google/gemini-cli` ia falhar depois.
+NODE_MINIMO = (20,)
+NODE_CLAUDE_CODE = (22,)
+
 # Arquivos que provam que este e' o repositorio do produto, e nao uma pasta qualquer.
 ARQUIVOS_ESSENCIAIS = [
     "SETUP.md",
     os.path.join("setup", "install_evolution.py"),
     os.path.join("setup", "connect_whatsapp.py"),
     os.path.join("templates", "whatsapp", "agent_template.py"),
+    os.path.join("templates", "whatsapp", "watcher_template.py"),
     os.path.join("templates", "shared", "agent_core_template.py"),
+    os.path.join("templates", "shared", "sessions_template.py"),
 ]
 
 # nome exibido, comando, versao minima (None = nao valida versao)
 CHECKS = [
-    ("Python 3.9+", "python3", (3, 9)),
-    ("Node.js 18+", "node", (18,)),
+    ("Node.js 20+", "node", NODE_MINIMO),
     ("Git", "git", None),
     ("Docker", "docker", None),
 ]
 
 INSTRUCOES = {
+    "python": [
+        "Windows: baixe em https://www.python.org/downloads/ (marque 'Add to PATH')",
+    ],
     "python3": [
         "macOS:   brew install python3",
         "Linux:   sudo apt install python3 python3-pip python3-venv",
-        "Windows: baixe em https://www.python.org/downloads/ (marque 'Add to PATH')",
     ],
     "node": [
         "macOS:   brew install node   (ou baixe em https://nodejs.org/en/download)",
-        "Linux:   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash && nvm install 18",
+        "Linux:   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash",
+        "         export NVM_DIR=\"$HOME/.nvm\" && . \"$NVM_DIR/nvm.sh\"   (carrega o nvm nesta sessao)",
+        "         nvm install 20",
         "Windows: winget install OpenJS.NodeJS.LTS",
     ],
     "git": [
@@ -52,16 +71,13 @@ INSTRUCOES = {
     ],
     "docker": [
         "macOS/Windows: https://www.docker.com/products/docker-desktop",
-        "Linux:         sudo apt install docker.io docker-compose",
+        "Linux:         siga https://docs.docker.com/engine/install/ (instala Docker + plugin compose)",
     ],
 }
 
 
 def raiz_do_repo():
-    """Raiz do produto, derivada do proprio arquivo — nao do diretorio atual.
-
-    Assim o script funciona mesmo se a IA o chamar por caminho absoluto de outro lugar.
-    """
+    """Raiz do produto, derivada do proprio arquivo — nao do diretorio atual."""
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -70,6 +86,33 @@ def checar_pasta():
     raiz = raiz_do_repo()
     return [rel for rel in ARQUIVOS_ESSENCIAIS
             if not os.path.isfile(os.path.join(raiz, rel))]
+
+
+def estamos_dentro_da_pasta():
+    """O terminal precisa estar DENTRO da pasta, nao so o script.
+
+    As etapas seguintes usam caminhos relativos (`setup/install_evolution.py`,
+    `templates/...`). Se a IA chamar este arquivo por caminho absoluto de outro
+    diretorio, os arquivos existem mas a Etapa 2 quebra — entao checamos os dois.
+    """
+    try:
+        return os.path.realpath(os.getcwd()) == os.path.realpath(raiz_do_repo())
+    except OSError:
+        return False
+
+
+def instrucao_de_clone():
+    """Comandos de clone, uma linha por vez.
+
+    Sem `&&` e sem `2>/dev/null`: no PowerShell do Windows o `&&` nao e' operador
+    valido (PS 5.1) e `/dev/null` nao existe. Tres linhas separadas funcionam em
+    bash, zsh, PowerShell e CMD — e continuam idempotentes: se o clone falhar
+    porque a pasta ja existe, o `cd` e a abertura da IA acontecem do mesmo jeito.
+    """
+    return [
+        "git clone %s" % REPO_URL,
+        "cd agente-ia-vendas",
+    ]
 
 
 def extrair_versao(texto):
@@ -82,6 +125,7 @@ def extrair_versao(texto):
 
 def rodar(args, timeout=10):
     """Executa e devolve (ok, saida). Nunca levanta excecao."""
+    proc = None
     try:
         proc = subprocess.Popen(
             args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -90,7 +134,12 @@ def rodar(args, timeout=10):
         texto = (saida or b"").decode("utf-8", "replace").strip()
         return proc.returncode == 0, texto
     except subprocess.TimeoutExpired:
-        proc.kill()
+        # kill() sem wait() deixa processo zumbi — o filho so e' colhido no wait.
+        try:
+            proc.kill()
+            proc.communicate()
+        except Exception:
+            pass
         return False, "tempo esgotado"
     except (OSError, ValueError):
         return False, ""
@@ -117,9 +166,28 @@ def checar_programa(nome, cmd, versao_minima):
     return "ok", primeira_linha
 
 
+def versao_do_node():
+    ok, saida = rodar(["node", "--version"])
+    return extrair_versao(saida) if ok else None
+
+
 def docker_esta_rodando():
-    """Docker instalado != Docker aberto. Fechado, a Etapa 2 falha com erro confuso."""
-    ok, _ = rodar(["docker", "info"], timeout=20)
+    """Docker instalado != Docker aberto. Fechado, a Etapa 2 falha com erro confuso.
+
+    30s porque o Docker Desktop recem-aberto demora a responder e um timeout curto
+    reprovava quem tinha acabado de abrir o app.
+    """
+    ok, _ = rodar(["docker", "info"], timeout=30)
+    return ok
+
+
+def docker_compose_v2():
+    """A Etapa 2 roda `docker compose up -d` (plugin V2).
+
+    Quem instalou so o `docker-compose` V1 (binario separado, comum no apt antigo)
+    passa no `docker info` e quebra depois, na Evolution API.
+    """
+    ok, _ = rodar(["docker", "compose", "version"], timeout=20)
     return ok
 
 
@@ -138,17 +206,39 @@ def main():
             print("   - %s" % rel)
         print("\nIA: PARE o setup aqui. Nao crie arquivos, nao instale nada e")
         print("NUNCA construa um agente de WhatsApp do zero. Peca ao usuario para")
-        print("fechar a IA (/exit) e colar este comando no terminal:\n")
-        print("   git clone %s 2>/dev/null; cd agente-ia-vendas\n" % REPO_URL)
-        print("Depois abrir a IA de novo DENTRO dessa pasta e digitar INICIAR SETUP.")
+        print("fechar a IA (/exit) e colar estas linhas no terminal, UMA POR VEZ:\n")
+        for linha in instrucao_de_clone():
+            print("   %s" % linha)
+        print("\nDepois abrir a IA de novo DENTRO dessa pasta e digitar INICIAR SETUP.")
+        sys.exit(2)
+
+    if not estamos_dentro_da_pasta():
+        print("\n[X] TERMINAL FORA DA PASTA DO PRODUTO")
+        print("=" * 60)
+        print("\nOs arquivos existem em:")
+        print("   %s" % raiz_do_repo())
+        print("mas o terminal esta em:")
+        print("   %s" % os.getcwd())
+        print("\nAs proximas etapas usam caminhos relativos e vao falhar assim.")
+        print("IA: PARE e rode primeiro:\n")
+        print("   cd %s\n" % raiz_do_repo())
         sys.exit(2)
 
     print("\n[OK] Pasta do produto confirmada:")
     print("     %s" % raiz_do_repo())
 
-    # --- Programas ----------------------------------------------------------
+    # --- Python: conferido pelo interpretador que esta rodando este arquivo --
     ausentes = []
     antigos = []
+    if sys.version_info[:2] < (3, 9):
+        atual = ".".join(str(n) for n in sys.version_info[:3])
+        print("\n%-14s [!]  Python %s (precisa ser 3.9 ou maior)" % ("Python 3.9+:", atual))
+        antigos.append(("Python 3.9+", PY_CMD))
+    else:
+        print("\n%-14s [OK] Python %s" % (
+            "Python 3.9+:", ".".join(str(n) for n in sys.version_info[:3])))
+
+    # --- Demais programas ---------------------------------------------------
     for nome, cmd, versao_minima in CHECKS:
         status, detalhe = checar_programa(nome, cmd, versao_minima)
         if status == "ok":
@@ -162,16 +252,22 @@ def main():
 
     # --- Docker precisa estar ABERTO, nao so instalado ----------------------
     docker_parado = False
+    compose_ausente = False
     if not any(cmd == "docker" for _, cmd in ausentes):
         if docker_esta_rodando():
             print("\n%-14s [OK] em execucao" % "Docker ativo:")
+            if docker_compose_v2():
+                print("\n%-14s [OK] disponivel" % "docker compose:")
+            else:
+                compose_ausente = True
+                print("\n%-14s [X]  plugin V2 ausente" % "docker compose:")
         else:
             docker_parado = True
             print("\n%-14s [X]  instalado, mas NAO esta em execucao" % "Docker ativo:")
 
     problemas = ausentes + antigos
 
-    if problemas or docker_parado:
+    if problemas or docker_parado or compose_ausente:
         print("\n" + "=" * 60)
         print("Faltam dependencias")
         print("=" * 60)
@@ -187,15 +283,31 @@ def main():
             print("                 da baleia ficar estavel.")
             print("  Linux:         sudo systemctl start docker")
 
+        if compose_ausente:
+            print("\nO comando `docker compose` (plugin V2) nao respondeu.")
+            print("A Etapa 2 depende dele para subir a Evolution API.")
+            print("  Linux:         siga https://docs.docker.com/engine/install/ — o apt padrao")
+            print("                 do Ubuntu/Debian NAO tem o pacote docker-compose-plugin")
+            print("  macOS/Windows: atualize o Docker Desktop (ja vem com o plugin)")
+
         print("\nDepois de resolver, rode de novo:")
-        print("  python3 setup/check_prerequisites.py\n")
+        print("  %s setup/check_prerequisites.py\n" % PY_CMD)
         sys.exit(1)
+
+    # Aviso, nao bloqueio: so importa para quem escolheu o Claude Code.
+    node = versao_do_node()
+    if node is not None and node[:1] < NODE_CLAUDE_CODE:
+        print("\n[!] Seu Node e' %s. Gemini e Codex rodam nele, mas o Claude Code"
+              % ".".join(str(n) for n in node))
+        print("    exige Node %d ou maior — se voce escolheu o Claude Code,"
+              % NODE_CLAUDE_CODE[0])
+        print("    atualize o Node antes de instalar a CLI.")
 
     print("\n" + "=" * 60)
     print("[OK] Todos os pre-requisitos estao instalados!")
     print("=" * 60)
     print("\nProxima etapa:")
-    print("  python3 setup/install_evolution.py\n")
+    print("  %s setup/install_evolution.py\n" % PY_CMD)
 
 
 if __name__ == "__main__":

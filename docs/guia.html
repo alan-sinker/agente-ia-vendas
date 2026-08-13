@@ -878,22 +878,28 @@ footer span { color: var(--accent-purple); }
     </div>
   </div>
 
-  <p style="color:var(--text-secondary); margin-bottom: 24px;">Este é o <strong style="color:var(--text-primary)">único comando</strong> de todo o processo. Escolha <strong style="color:var(--text-primary)">uma</strong> das três IAs, cole a linha dela no terminal e aperte Enter — ela abre na pasta certa e começa o setup automaticamente.</p>
+  <p style="color:var(--text-secondary); margin-bottom: 24px;">Este é o <strong style="color:var(--text-primary)">único comando</strong> de todo o processo. Escolha <strong style="color:var(--text-primary)">uma</strong> das três IAs e cole as 3 linhas dela no terminal — ela abre na pasta certa e começa o setup automaticamente.</p>
 
   <div class="terminal">
     <div class="terminal-bar">
       <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-      <div class="terminal-title">Terminal — copie e cole a linha da SUA IA</div>
+      <div class="terminal-title">Terminal — copie e cole as 3 linhas da SUA IA</div>
     </div>
     <div class="terminal-body">
       <span class="t-line"><span class="t-comment"># Gemini — grátis, é a opção recomendada</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> 2&gt;/dev/null; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">gemini</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">gemini</span></span></span>
       <span class="t-line">&nbsp;</span>
       <span class="t-line"><span class="t-comment"># Codex</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> 2&gt;/dev/null; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">codex</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">codex</span></span></span>
       <span class="t-line">&nbsp;</span>
       <span class="t-line"><span class="t-comment"># Claude Code — exige assinatura Claude Pro (~US$20/mês)</span></span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span> 2&gt;/dev/null; cd agente-ia-vendas &amp;&amp; <span class="t-highlight">claude</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone <span class="t-url">https://github.com/zxmarketingdigital/agente-ia-vendas.git</span></span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd agente-ia-vendas</span></span>
+      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd"><span class="t-highlight">claude</span></span></span>
     </div>
   </div>
 
@@ -921,7 +927,7 @@ footer span { color: var(--accent-purple); }
   <div class="callout info">
     <span class="callout-icon">⚠️</span>
     <div class="callout-body">
-      Antes de colar, você precisa ter instalado o <strong>Node.js</strong> (é o que faz a CLI da IA funcionar) e a <strong>CLI da IA escolhida</strong> — só isso. <strong>Python</strong>, <strong>Git</strong> e <strong>Docker</strong> a IA confere na Etapa 1 e, se faltar algum, ela te dá o comando exato para o seu sistema antes de seguir.
+      Antes de colar, você precisa ter instalado o <strong>Node.js</strong> (é o que faz a CLI da IA funcionar), a <strong>CLI da IA escolhida</strong> e o <strong>Python</strong> — este último porque a verificação da Etapa 1 é um script Python, e sem ele a IA não consegue nem rodar o check. No macOS e no Linux o Python já vem instalado; na prática, só quem está no Windows precisa instalar. <strong>Git</strong> e <strong>Docker</strong> a IA confere na Etapa 1 e, se faltar algum, ela te dá o comando exato para o seu sistema antes de seguir.
     </div>
   </div>
 </section>
@@ -1183,7 +1189,7 @@ footer span { color: var(--accent-purple); }
     </tr>
     <tr>
       <td><code>npm error code EACCES … permission denied, mkdir '/usr/local/lib/node_modules/…'</code></td>
-      <td>macOS: sem permissão na pasta global do npm. Rode <code>sudo chown -R $(whoami) /usr/local/lib/node_modules /usr/local/bin</code> e repita o <code>npm install -g</code>.</td>
+      <td>macOS/Linux: sem permissão na pasta global do npm. Instale o Node por <code>brew install node</code> (macOS) ou nvm (Linux) e repita — assim não precisa de permissão especial. Em último caso, rode o <code>npm install -g</code> com <code>sudo</code>. <strong>Não use <code>chown -R</code> em <code>/usr/local/bin</code></strong>: reescreve o dono de programas sem relação com o npm.</td>
     </tr>
     <tr>
       <td>Janela do Mac pedindo acesso a <strong>Documentos</strong>, <strong>Área de Trabalho</strong> ou <strong>Downloads</strong></td>
@@ -1198,7 +1204,7 @@ footer span { color: var(--accent-purple); }
   <div class="callout info">
     <span class="callout-icon">💬</span>
     <div class="callout-body">
-      Não resolveu? Cole o erro na <strong>IA de Suporte</strong>: <strong>suporte.zxlab.com.br/hub</strong>
+      Não resolveu? Cole o erro na <strong>IA de Suporte</strong>: <a href="https://suporte.zxlab.com.br/hub" style="color:var(--accent-amber); text-decoration:underline"><strong>suporte.zxlab.com.br/hub</strong></a>
     </div>
   </div>
 </section>
@@ -1257,7 +1263,7 @@ footer span { color: var(--accent-purple); }
     <div class="callout-body">
       <strong>Este guia é a visão geral.</strong> O passo a passo completo, com os prints de cada
       tela e as instruções de instalação por sistema operacional, fica na página oficial:
-      <strong>zxlab.com.br/instalar-agente-ia</strong>. E o roteiro que a IA segue durante o
+      <a href="https://zxlab.com.br/instalar-agente-ia" style="color:var(--accent-amber); text-decoration:underline"><strong>zxlab.com.br/instalar-agente-ia</strong></a>. E o roteiro que a IA segue durante o
       setup é o <code>SETUP.md</code> do repositório — é lá que qualquer correção é feita.
     </div>
   </div>

@@ -9,6 +9,12 @@
 
 ## REGRAS DE COMPORTAMENTO (leia antes de tudo)
 
+> 🪟 **No Windows o comando do Python é `python`, não `python3`** — vale para TODAS as
+> etapas deste roteiro. O instalador do python.org não cria `python3`, e o atalho
+> `python3` do sistema abre a Microsoft Store em vez de rodar o script. Se o usuário
+> estiver no Windows, troque `python3` por `python` (ou `py -3`) em todo comando abaixo,
+> e use `\` no lugar de `/` nos caminhos.
+
 Você é o assistente de setup deste produto. Seu papel é conduzir o usuário do zero até ter
 um agente de IA respondendo no WhatsApp — sem que ele precise digitar um único comando.
 
@@ -38,10 +44,11 @@ um agente de IA respondendo no WhatsApp — sem que ele precise digitar um únic
   arquivos, não instale nada, não invente um agente. Mostre exatamente esta mensagem:
 
   > "Opa — parece que não estamos na pasta certa. Antes de continuar, feche este programa
-  > (digite `/exit` e aperte Enter) e cole estes dois comandos no terminal:
+  > (digite `/exit` e aperte Enter) e cole estas duas linhas no terminal (uma de cada vez):
   >
   > ```
-  > git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas
+  > git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
+  > cd agente-ia-vendas
   > ```
   >
   > Depois abra a IA de novo aqui dentro e digite `INICIAR SETUP`. Aí eu continuo. 👍"
@@ -203,7 +210,8 @@ abrir ticket por causa disso.
 |---|---|---|
 | `Uncaught SyntaxError: Unexpected identifier` logo depois de `Welcome to Node.js` | Ele digitou `node` sozinho e caiu no console do Node. O prompt virou `>` | Digitar `.exit` (ou `Ctrl+D`) e rodar o comando de novo no terminal normal |
 | `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows: PowerShell bloqueia scripts por padrão. Atinge `gemini`, `codex` e `claude` instalados via npm | Abrir o PowerShell **como Administrador** e rodar `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirmar com `S`, fechar e abrir o terminal |
-| `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS: o usuário não tem permissão de escrita na pasta global do npm | `sudo chown -R $(whoami) /usr/local/lib/node_modules /usr/local/bin` e repetir o `npm install -g` |
+| `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS/Linux: o usuário não tem permissão de escrita na pasta global do npm | Primeiro tente instalar o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repetir o `npm install -g` — aí não precisa de permissão especial. Só se isso não der, repetir com `sudo` na frente. **Nunca** mandar `sudo chown -R` em `/usr/local/bin`: reescreve o dono de programas sem relação com o npm |
+| `python3` abre a Microsoft Store, ou `'python3' não é reconhecido` | Windows: o instalador do python.org cria `python`/`py`, não `python3` — e o sistema tem um atalho `python3` que abre a Store | Usar `python setup\check_prerequisites.py` (ou `py -3 ...`). Se o Python não estiver instalado, baixar em python.org marcando **Add python.exe to PATH** |
 | Janela do Mac pedindo acesso a Documentos / Área de Trabalho / Downloads | Permissão do macOS (TCC), não é a IA | Clicar em **Permitir**. Se já negou: Ajustes do Sistema → Privacidade e Segurança → Arquivos e Pastas |
 | `Do you trust the files in this folder?` / `Is this a project you created or one you trust?` | Checagem de segurança da própria IA | Confirmar a opção **1 (Yes, I trust this folder)** — **desde que** a Etapa 0 tenha passado. Se estiver na pasta errada, sair e refazer o clone |
 | A IA começa a "planejar a arquitetura" ou perguntar qual biblioteca usar (Baileys, etc.) | **Pasta errada** — ela não achou este roteiro e está improvisando | Voltar à Etapa 0 e refazer o clone |

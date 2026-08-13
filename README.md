@@ -4,24 +4,36 @@ Um **agente de vendas IA que responde no WhatsApp** sem código complicado. Setu
 
 ## ⚡ Quick Start
 
-Cole no terminal o comando da IA que você escolheu — ela faz o resto:
+Cole no terminal as três linhas da IA que você escolheu — ela faz o resto:
 
 ```bash
 # Gemini (grátis)
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && gemini
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
+cd agente-ia-vendas
+gemini
 ```
 
 ```bash
 # Codex
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && codex
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
+cd agente-ia-vendas
+codex
 ```
 
 ```bash
 # Claude Code
-git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && claude
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git
+cd agente-ia-vendas
+claude
 ```
 
-> Já rodou esse comando antes e a pasta `agente-ia-vendas` já existe no seu computador? Sem problema — pode colar de novo, ele pula o clone e só continua de onde parou.
+> **Funciona no macOS, no Linux e no Windows** (PowerShell, CMD ou Git Bash) — são três
+> linhas independentes de propósito, sem `&&` nem `2>/dev/null`, que não existem em todos
+> os terminais.
+>
+> Já rodou isso antes e a pasta `agente-ia-vendas` já existe? Sem problema — cole de novo.
+> A primeira linha vai reclamar que a pasta já existe (`destination path already exists`),
+> **ignore esse aviso**: as duas linhas seguintes continuam normalmente de onde você parou.
 
 A IA abre automaticamente **dentro da pasta clonada** e conduz o setup por você. Se ela não
 começar sozinha, digite `INICIAR SETUP`.
