@@ -47,3 +47,7 @@ logs/
 /dist
 /build
 *.egg-info/
+
+# Internos (repo é público — aluno clona)
+HISTORICO-SESSOES.md
+graphify-out/

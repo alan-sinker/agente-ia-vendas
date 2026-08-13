@@ -4,15 +4,32 @@ Um **agente de vendas IA que responde no WhatsApp** sem código complicado. Setu
 
 ## ⚡ Quick Start
 
-Cole este comando no terminal e o Claude faz o resto:
+Cole no terminal o comando da IA que você escolheu — ela faz o resto:
 
 ```bash
+# Gemini (grátis)
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && gemini
+```
+
+```bash
+# Codex
+git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && codex
+```
+
+```bash
+# Claude Code
 git clone https://github.com/zxmarketingdigital/agente-ia-vendas.git 2>/dev/null; cd agente-ia-vendas && claude
 ```
 
 > Já rodou esse comando antes e a pasta `agente-ia-vendas` já existe no seu computador? Sem problema — pode colar de novo, ele pula o clone e só continua de onde parou.
 
-O Claude abre automaticamente e conduz o setup por você — sem mais nenhum comando.
+A IA abre automaticamente **dentro da pasta clonada** e conduz o setup por você. Se ela não
+começar sozinha, digite `INICIAR SETUP`.
+
+> 🛑 **O `cd agente-ia-vendas` não é opcional.** Se você abrir a IA fora dessa pasta, ela
+> não encontra o roteiro do produto e começa a inventar um bot do zero (perguntando qual
+> biblioteca usar, rodando `npm init`, etc.). Se isso acontecer, feche com `/exit` e cole o
+> comando acima de novo.
 
 ## 📋 O que você vai ter
 
@@ -50,7 +67,10 @@ Se purchase intent → envia checkout link
 
 ```
 agente-ia-vendas/
-├── CLAUDE.md                          ← LEIA ISSO PRIMEIRO
+├── SETUP.md                           ← ROTEIRO CANÔNICO do setup (corrija aqui)
+├── CLAUDE.md                          ← porta de entrada do Claude Code  ─┐
+├── GEMINI.md                          ← porta de entrada do Gemini CLI   ─┼→ apontam p/ SETUP.md
+├── AGENTS.md                          ← porta de entrada do Codex CLI    ─┘
 ├── README.md                          ← Documentação técnica
 │
 ├── setup/
@@ -115,7 +135,11 @@ Para rodas 24/7:
 
 ## 💬 Suporte
 
-Problemas? Verifique [CLAUDE.md](CLAUDE.md) ou abra uma issue.
+Travou? A tabela **"Problemas que travam o aluno ANTES do setup começar"** no fim do
+[SETUP.md](SETUP.md) cobre os erros mais comuns (console do Node, PowerShell bloqueando
+scripts no Windows, `EACCES` do npm no Mac, permissões de pasta do macOS).
+
+Se não resolver, cole o erro na [IA de Suporte](https://suporte.zxlab.com.br/hub).
 
 ## 📄 Licença
 
