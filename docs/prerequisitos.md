@@ -62,7 +62,7 @@ node --version    # precisa ser 20 ou maior
 
 | Erro | Sistema | Correção |
 |---|---|---|
-| `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows | Abra o PowerShell **como Administrador**, rode `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirme com `S`, feche e reabra o terminal. Vale para `gemini`, `codex` e `claude`. |
+| `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows | Abra o PowerShell **normal** (NÃO precisa ser Administrador — `-Scope CurrentUser` altera só o seu perfil de usuário), rode `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirme com `S`, **feche e reabra** o terminal. Vale para `gemini`, `codex` e `claude`. |
 | `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS / Linux | Instale o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repita o `npm install -g` — assim não precisa de permissão especial. Se não der, aí sim repita o **mesmo comando da IA que você escolheu** com `sudo` na frente (ex.: `sudo npm install -g @google/gemini-cli`) |
 
 > ⚠️ **Não use `sudo chown -R` em `/usr/local/bin`** para resolver o EACCES. É uma

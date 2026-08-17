@@ -1185,7 +1185,7 @@ footer span { color: var(--accent-purple); }
     </tr>
     <tr>
       <td><code>gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada</code></td>
-      <td>Windows: o PowerShell bloqueia scripts por padrão. Abra o PowerShell <strong>como Administrador</strong>, rode <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>, confirme com <code>S</code> e reabra o terminal. Vale para <code>gemini</code>, <code>codex</code> e <code>claude</code>.</td>
+      <td>Windows: o PowerShell bloqueia scripts por padrão. Abra o PowerShell <strong>normal</strong> (não precisa ser Administrador &mdash; <code>-Scope CurrentUser</code> altera só o seu perfil de usuário), rode <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>, confirme com <code>S</code> e <strong>feche e reabra</strong> o terminal. Vale para <code>gemini</code>, <code>codex</code> e <code>claude</code>.</td>
     </tr>
     <tr>
       <td><code>npm error code EACCES … permission denied, mkdir '/usr/local/lib/node_modules/…'</code></td>
