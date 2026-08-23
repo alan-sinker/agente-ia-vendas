@@ -62,6 +62,8 @@ node --version    # precisa ser 20 ou maior
 
 | Erro | Sistema | Correção |
 |---|---|---|
+| `gemini : O termo 'gemini' não é reconhecido como nome de cmdlet` | Windows | O npm instalou, mas o terminal ainda carrega o PATH antigo. **Feche e reabra o terminal** e rode `gemini --version`. Se persistir: `npm list -g --depth=0` (tem que aparecer `@google/gemini-cli`) e confira `npm config get prefix` no **Path** das Variáveis de Ambiente. Atalho: `npx @google/gemini-cli`. O pacote é `@google/gemini-cli` — `@google/generative-ai-cli` não existe (erro 404) |
+| `usage limit reached for gemini` | Qualquer | É a cota **grátis diária** da sua conta Google no Gemini CLI, não um erro de instalação. Espere o reset e continue de onde parou, **ou** abra `codex`/`claude` na mesma pasta e digite `INICIAR SETUP`, **ou** use outra conta Google. Não precisa comprar crédito de API |
 | `gemini.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Windows | Abra o PowerShell **normal** (NÃO precisa ser Administrador — `-Scope CurrentUser` altera só o seu perfil de usuário), rode `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, confirme com `S`, **feche e reabra** o terminal. Vale para `gemini`, `codex` e `claude`. |
 | `npm error code EACCES ... permission denied, mkdir '/usr/local/lib/node_modules/...'` | macOS / Linux | Instale o Node por um gerenciador do próprio usuário (`brew install node` no macOS, nvm no Linux) e repita o `npm install -g` — assim não precisa de permissão especial. Se não der, aí sim repita o **mesmo comando da IA que você escolheu** com `sudo` na frente (ex.: `sudo npm install -g @google/gemini-cli`) |
 
