@@ -144,6 +144,16 @@ winget install Git.Git
 > Windows, abra o app Docker Desktop e espere o ícone da baleia ficar estável antes de
 > seguir. Instalado mas fechado faz a Etapa 2 falhar com um erro confuso.
 
+> ⚠️ **Se aparecer “Virtualization support not detected”, o Docker está instalado mas não
+> consegue iniciar.** Reinstalar não resolve: no Windows, reinicie e entre na BIOS/UEFI
+> (F2, F10, DEL ou ESC), ative **Intel VT-x**, **AMD-V** ou **SVM Mode** em Advanced,
+> CPU Configuration ou Security, salve e reinicie. Depois, no PowerShell como Administrador,
+> rode `wsl --install`, reinicie de novo e abra o Docker Desktop. No macOS, a virtualização
+> já vem ligada de fábrica; se esse erro aparecer, desinstale e reinstale o Docker Desktop.
+> No Linux, confira `grep -Eoc '(vmx|svm)' /proc/cpuinfo`: se der `0`, ative a virtualização
+> na BIOS seguindo o mesmo princípio. Alternativa no macOS: `brew install orbstack` — o
+> OrbStack roda os mesmos containers e substitui o Docker Desktop no restante do setup.
+
 ---
 
 ## Verificar tudo de uma vez

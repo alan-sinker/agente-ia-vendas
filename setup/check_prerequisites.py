@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 
 REPO_URL = "https://github.com/zxmarketingdigital/agente-ia-vendas.git"
 
@@ -177,8 +178,8 @@ def docker_esta_rodando():
     30s porque o Docker Desktop recem-aberto demora a responder e um timeout curto
     reprovava quem tinha acabado de abrir o app.
     """
-    ok, _ = rodar(["docker", "info"], timeout=30)
-    return ok
+    ok, saida = rodar(["docker", "info"], timeout=30)
+    return ok, saida
 
 
 def docker_compose_v2():
@@ -252,9 +253,11 @@ def main():
 
     # --- Docker precisa estar ABERTO, nao so instalado ----------------------
     docker_parado = False
+    docker_sem_virtualizacao = False
     compose_ausente = False
     if not any(cmd == "docker" for _, cmd in ausentes):
-        if docker_esta_rodando():
+        docker_ok, docker_saida = docker_esta_rodando()
+        if docker_ok:
             print("\n%-14s [OK] em execucao" % "Docker ativo:")
             if docker_compose_v2():
                 print("\n%-14s [OK] disponivel" % "docker compose:")
@@ -263,6 +266,16 @@ def main():
                 print("\n%-14s [X]  plugin V2 ausente" % "docker compose:")
         else:
             docker_parado = True
+            docker_saida_normalizada = unicodedata.normalize(
+                "NFKD", docker_saida or ""
+            ).encode("ascii", "ignore").decode("ascii").lower()
+            docker_sem_virtualizacao = any(
+                termo in docker_saida_normalizada
+                for termo in (
+                    "virtualization", "virtualisation", "hypervisor",
+                    "hyper-v", "wsl", "vmx",
+                )
+            )
             print("\n%-14s [X]  instalado, mas NAO esta em execucao" % "Docker ativo:")
 
     problemas = ausentes + antigos
@@ -278,10 +291,27 @@ def main():
                 print("  " + linha)
 
         if docker_parado:
-            print("\nDocker esta instalado, mas o servico nao respondeu.")
-            print("  macOS/Windows: abra o app Docker Desktop e espere o icone")
-            print("                 da baleia ficar estavel.")
-            print("  Linux:         sudo systemctl start docker")
+            if docker_sem_virtualizacao:
+                print("\nDocker Desktop esta instalado mas NAO consegue iniciar: falta suporte a")
+                print("virtualizacao. Instalar de novo NAO resolve - o ajuste e' fora do Docker.")
+                print("  Windows: 1) reinicie e entre na BIOS/UEFI (tecla F2, F10, DEL ou ESC no")
+                print("               boot, varia por fabricante)")
+                print("           2) ative 'Intel VT-x' / 'AMD-V' / 'SVM Mode' (fica em Advanced,")
+                print("               CPU Configuration ou Security)")
+                print("           3) salve, reinicie e rode no PowerShell como Administrador:")
+                print("               wsl --install")
+                print("           4) reinicie de novo e abra o Docker Desktop")
+                print("  macOS:   virtualizacao vem ligada de fabrica; se deu esse erro, e' o app")
+                print("           corrompido - desinstale e reinstale o Docker Desktop")
+                print("  Linux:   confira com: grep -Eoc '(vmx|svm)' /proc/cpuinfo")
+                print("           (0 = desabilitado na BIOS, mesmo passo do Windows)")
+                print("  Alternativa sem BIOS (macOS): brew install orbstack - o OrbStack roda os")
+                print("  mesmos containers e substitui o Docker Desktop no resto do setup.")
+            else:
+                print("\nDocker esta instalado, mas o servico nao respondeu.")
+                print("  macOS/Windows: abra o app Docker Desktop e espere o icone")
+                print("                 da baleia ficar estavel.")
+                print("  Linux:         sudo systemctl start docker")
 
         if compose_ausente:
             print("\nO comando `docker compose` (plugin V2) nao respondeu.")
